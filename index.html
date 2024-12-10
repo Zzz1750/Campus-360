@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>VR Joystick Control</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <style>
+      body { margin: 0; }
+      canvas { display: block; }
+    </style>
+  </head>
+  <body>
+    <!-- VR Scene -->
+    <a-scene background="color: black">
+      <!-- Camera with Sphere Parent -->
+      <a-entity id="camera" camera look-controls position="0 0 0">
+        <a-sphere id="sphere" radius="5000" scale="-1 1 1" src="1.JPG"></a-sphere>
+      </a-entity>
+
+      <!-- Button for Direct VR Entry -->
+      <a-plane position="0 1 -2" width="2" height="1" color="#007BFF" id="vr-button">
+        <a-text value="Enter VR" align="center" position="0 0 0.1"></a-text>
+      </a-plane>
+    </a-scene>
+
+    <script>
+      const sphere = document.getElementById("sphere");
+      const vrButton = document.getElementById("vr-button");
+
+      // Enable VR when clicking the button
+      vrButton.addEventListener("click", () => {
+        document.querySelector("a-scene").enterVR();
+      });
+
+      // Joystick input handling
+      let rotationSpeed = 2; // Adjust for sensitivity
+      setInterval(() => {
+        const gamepads = navigator.getGamepads();
+        if (gamepads) {
+          const controller = gamepads[0] || gamepads[1]; // Use the right-hand controller
+          if (controller && controller.axes) {
+            const x = controller.axes[2]; // Horizontal joystick axis
+            const y = controller.axes[3]; // Vertical joystick axis
+
+            // Rotate the sphere based on joystick input
+            sphere.object3D.rotation.y -= x * rotationSpeed * 0.01; // Horizontal rotation
+            sphere.object3D.rotation.x -= y * rotationSpeed * 0.01; // Vertical rotation
+          }
+        }
+      }, 50);
+    </script>
+  </body>
+</html>
